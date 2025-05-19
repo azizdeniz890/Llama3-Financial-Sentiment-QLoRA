@@ -31,7 +31,15 @@ Proje, aşağıdaki ana bileşenleri içeren notebook'lar aracılığıyla sunul
     *   **Hızlı Test Notebook'u:** Bu notebook, eğitilmiş modelin ve adaptörlerin Hugging Face Hub'dan çekilerek kolayca test edilebilmesi için tasarlanmıştır.
         *   Kullanıcının sadece birkaç örnek finansal cümle girmesiyle modelin duygu tahminlerini hızlıca görmesini sağlar.
         *   Modelin pratik kullanımını ve erişilebilirliğini gösterir.
+## Veri Seti
 
+Bu projede kullanılan veri seti `data/data.csv` dosyasında bulunmaktadır. Veri seti, makine öğrenimi platformu Kaggle'da bulunan ve finansal duygu analizi çalışmaları için yaygın olarak kullanılan **"Financial Sentiment Analysis"** veri setidir.
+
+Bu veri seti, özellikle finansal haber başlıklarından ve kısa metinlerden oluşmakta olup, her bir metin için "pozitif", "negatif" veya "nötr" olmak üzere üç temel duygu etiketinden biri atanmıştır. Modelin eğitimi ve değerlendirilmesi bu etiketlenmiş verilere dayanmaktadır.
+
+Veri setinin orijinal kaynağına ve daha detaylı bilgisine aşağıdaki Kaggle bağlantısından ulaşabilirsiniz:
+*   [Financial Sentiment Analysis on Kaggle](https://www.kaggle.com/datasets/sbhatti/financial-sentiment-analysis/data)
+*   
 ## Kullanılan Teknolojiler ve Kütüphaneler
 
 *   **Model:** `meta-llama/Meta-Llama-3-8B-Instruct`
@@ -146,4 +154,4 @@ Eğitilmiş QLoRA adaptörleri, `azizdeniz890/Llama3-8B-Financial-Sentiment-LoRA
 
 ## Katkıda Bulunan
 
-*   Aziz Deniz ([azizdeniz890](https://github.com/azizdeniz890))
+*   Aziz Deniz ([azizdeniz890](https://github.com/azizdeniz890)) - azizdeniz098@gmail.com
