@@ -72,34 +72,73 @@ Bu projede kullanılan veri seti `data/data.csv` dosyasında bulunmaktadır. Fin
 
 ## Sonuçlar ve Değerlendirme
 
-Modelin performansı, ince ayar öncesi ve sonrası olmak üzere test veri seti üzerinde değerlendirilmiştir. Elde edilen metrikler ve görselleştirmeler aşağıdadır:
+Bu bölümde, Llama-3-8B-Instruct modelinin finansal duygu analizi görevindeki performansı, hem ince ayar (fine-tuning) öncesi "saf" haliyle hem de QLoRA adaptörleri ile ince ayar yapıldıktan sonraki haliyle karşılaştırmalı olarak sunulmaktadır. Değerlendirmeler, ayrılmış test veri seti üzerinde yapılmıştır.
 
-### İnce Ayar Öncesi Model Performansı
+### İnce Ayar Öncesi Model Performansı (Temel Model)
 
-(Karmaşıklık Matrisi - İnce Ayar Öncesi)
+Temel `meta-llama/Meta-Llama-3-8B-Instruct` modelinin, herhangi bir ek ince ayar yapılmadan önceki performansı, finansal duygu analizi görevine ne kadar hazır olduğunu anlamak için değerlendirilmiştir.
+
+*   **Genel Doğruluk (Overall Accuracy):** **%43.4**
+
+Modelin sınıflar bazındaki doğruluğu incelendiğinde:
+*   Negatif (Label 0) sınıfını tanıma doğruluğu: %10.7
+*   Nötr (Label 1) sınıfını tanıma doğruluğu: %99.0
+*   Pozitif (Label 2) sınıfını tanıma doğruluğu: %20.7
+
+Bu sonuçlar, temel modelin özellikle "nötr" etiketli metinleri yüksek bir doğrulukla tahmin edebildiğini, ancak "pozitif" ve özellikle "negatif" duyguları ayırt etmede zorlandığını göstermektedir. Bu durum, genel amaçlı eğitilmiş büyük dil modellerinin spesifik görevlerde ek ince ayar gerektirdiğinin tipik bir örneğidir.
+
+**Karmaşıklık Matrisi (İnce Ayar Öncesi):**
+Bu matris, modelin hangi sınıfları birbiriyle karıştırdığını göstermektedir. Özellikle "pozitif" ve "negatif" etiketli birçok örneğin yanlışlıkla "nötr" olarak sınıflandırıldığı görülmektedir.
 ![İnce Ayar Öncesi Karmaşıklık Matrisi](results/confusion_matrix_before.png)
-*İnce ayar öncesi modelin test doğruluğu: ~%XX (Bu değeri notebook'unuzdan ekleyin)*
 
-### İnce Ayar Sonrası Model Performansı
+**Sınıflandırma Raporu Özeti (İnce Ayar Öncesi):**
+Modelin precision, recall ve F1-skor değerleri incelendiğinde, "nötr" sınıf için recall değeri çok yüksekken (%99), "negatif" (%11) ve "pozitif" (%21) sınıflar için oldukça düşüktür. Bu da modelin bu iki duygu kategorisini etkin bir şekilde yakalayamadığını teyit eder.
 
-(Karmaşıklık Matrisi - İnce Ayar Sonrası)
+### İnce Ayar Sonrası Model Performansı (QLoRA ile)
+
+QLoRA tekniği ile finansal veri seti üzerinde ince ayar yapıldıktan sonra modelin performansında belirgin bir artış gözlemlenmiştir.
+
+*   **Genel Doğruluk (Overall Accuracy):** **%85.9**
+
+Bu, ince ayar öncesine göre **%42.5 puanlık bir iyileşme** anlamına gelmektedir.
+
+Modelin sınıflar bazındaki doğruluğu ise şu şekilde değişmiştir:
+*   Negatif (Label 0) sınıfını tanıma doğruluğu: %87.7 (önceki %10.7'den büyük artış)
+*   Nötr (Label 1) sınıfını tanıma doğruluğu: %81.3 (önceki %99.0'dan bir miktar düşüş, ancak diğer sınıflardaki kazançla dengelenmiş)
+*   Pozitif (Label 2) sınıfını tanıma doğruluğu: %88.7 (önceki %20.7'den büyük artış)
+
+İnce ayar, modelin özellikle "pozitif" ve "negatif" duyguları tanıma yeteneğini önemli ölçüde geliştirmiştir. "Nötr" sınıfındaki hafif düşüş, modelin artık diğer iki sınıfa daha fazla odaklanmasından ve bu sınıfları daha iyi ayırt edebilmesinden kaynaklanmaktadır.
+
+**Karmaşıklık Matrisi (İnce Ayar Sonrası):**
+İnce ayar sonrası karmaşıklık matrisi, modelin her üç sınıf için de önemli ölçüde daha dengeli ve doğru tahminler yaptığını göstermektedir. Yanlış sınıflandırmalar azalmıştır.
 ![İnce Ayar Sonrası Karmaşıklık Matrisi](results/confusion_matrix_after.png)
 
-(Sınıf Bazlı Precision, Recall, F1-Skoru - İnce Ayar Sonrası)
+**Sınıf Bazlı Precision, Recall, F1-Skoru (İnce Ayar Sonrası):**
+Bu grafik, her bir duygu sınıfı için precision, recall ve F1-skor değerlerini göstermektedir. Tüm sınıflar için dengeli ve yüksek skorlar elde edildiği görülmektedir, bu da modelin genel performansının iyileştiğini ve her bir duygu türünü daha etkin bir şekilde ayırt edebildiğini gösterir.
 ![İnce Ayar Sonrası Sınıf Bazlı Metrikler](results/fine_tuned_metrics_per_class.png)
-*İnce ayar sonrası modelin test doğruluğu: ~%YY (Bu değeri notebook'unuzdan ekleyin)*
+
+**Sınıflandırma Raporu Özeti (İnce Ayar Sonrası):**
+*   **Negatif:** Precision: %86, Recall: %88, F1-Score: %87
+*   **Nötr:** Precision: %80, Recall: %81, F1-Score: %81
+*   **Pozitif:** Precision: %91, Recall: %89, F1-Score: %90
+
+Bu değerler, modelin her üç duygu kategorisinde de güçlü bir performans sergilediğini ortaya koymaktadır.
 
 ### Eğitim Süreci Grafikleri
 
-Eğitim sırasında modelin öğrenme davranışı aşağıdaki grafiklerle izlenmiştir:
+Eğitim süreci boyunca modelin öğrenme dinamikleri aşağıdaki grafiklerle izlenmiştir:
 
-(Eğitim Kaybı ve Öğrenme Oranı)
+**Eğitim Kaybı (Loss) ve Öğrenme Oranı (Learning Rate) Değişimi:**
+Bu grafik, eğitim epoch'ları boyunca modelin kayıp fonksiyonunun (loss) nasıl azaldığını ve öğrenme oranının (learning rate) zamanla nasıl değiştiğini gösterir. Kaybın düşmesi, modelin veri setindeki örüntüleri öğrendiğini işaret eder.
 ![Eğitim Kaybı ve Öğrenme Oranı](results/training_loss_lr_epochs.png)
 
-(Gradyan Normu)
+**Gradyan Normu Değişimi:**
+Bu grafik, eğitim sırasında gradyanların büyüklüğünün (norm) nasıl değiştiğini gösterir. Gradyan normunun çok yüksek veya çok düşük olmaması, stabil bir öğrenme süreci için önemlidir.
 ![Gradyan Normu](results/gradient_norm_epochs.png)
 
-İnce ayar sonrasında modelin finansal duygu analizi görevinde belirgin bir iyileşme gösterdiği gözlemlenmiştir.
+### Genel Değerlendirme
+
+Elde edilen sonuçlar, QLoRA ile yapılan ince ayarın, Llama-3-8B-Instruct modelinin finansal metinlerdeki duygu analizi görevindeki performansını önemli ölçüde artırdığını ve modeli bu spesifik görev için çok daha yetkin hale getirdiğini açıkça göstermektedir. Model, özellikle zorlayıcı olabilen "pozitif" ve "negatif" duyguları ayırt etmede büyük bir ilerleme kaydetmiştir.
 
 ## Adaptörlerin Kullanımı (Hugging Face Hub)
 
